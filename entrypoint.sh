@@ -9,15 +9,14 @@ fi
 sed -i "s/<PROXY_PORT>/${PROXY_PORT}/g" /privoxy.conf
 
 if [[ ! $SOCKS_HOST ]]; then
-	sed -i "s/<SOCKS_HOST>/127.0.0.1/g" /privoxy.conf
-else
-	sed -i "s/<SOCKS_HOST>/${SOCKS_HOST}/g" /privoxy.conf
+	SOCKS_HOST=127.0.0.1
 fi
+sed -i "s/<SOCKS_HOST>/${SOCKS_HOST}/g" /privoxy.conf
 
 if [[ ! $SOCKS_PORT ]]; then
-	sed -i "s/<SOCKS_PORT>/1080/g" /privoxy.conf
-else
-    sed -i "s/<SOCKS_PORT>/${SOCKS_PORT}/g" /privoxy.conf
+	SOCKS_PORT=1080
 fi
+sed -i "s/<SOCKS_PORT>/${SOCKS_PORT}/g" /privoxy.conf
 
+ssh -gNTC -D ${SOCKS_PORT} -o 'ServerAliveInterval=300' -o 'ExitOnForwardFailure=yes' $SSH_DEST
 privoxy --no-daemon /privoxy.conf
